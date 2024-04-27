@@ -6,6 +6,11 @@ public class GameTester {
     public static final int DIMENSION = 900;
     public static final int BUTTON_DIMENSION = 400;
     public static final int TITLE_BORDER_DISTANCEX = DIMENSION / 500 * 20;
+    public static final int IMAGE_BORDERX = TITLE_BORDER_DISTANCEX * 4;
+    public static final int LINE_BORDERX = IMAGE_BORDERX * 4;
+    public static final int LINE_LENGTH = 250;
+    public static final int ARROW_WING = 50;
+    public static final int DIAMETER = 150;
     public static final int FONT_SIZE = 150;
     public static final int TITLE_BORDER_DISTANCEY = 170;
     public static void main(String[] args) {
@@ -50,11 +55,53 @@ public class GameTester {
 class IntroScreen extends JComponent {
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        g2.setFont(new Font("Times New Roman", Font.ITALIC, GameTester.FONT_SIZE));
+        g2.setFont(new Font("Times New Roman",
+                            Font.ITALIC, GameTester.FONT_SIZE));
         g2.drawString("Find the Way!",
                       GameTester.TITLE_BORDER_DISTANCEX,
                       GameTester.TITLE_BORDER_DISTANCEY);
+        g2.setColor(Color.BLACK);
+        g2.setStroke(new BasicStroke(5));
+        g2.drawOval(GameTester.IMAGE_BORDERX,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2, 
+                    GameTester.DIAMETER, 
+                    GameTester.DIAMETER);
+        paintArrow(g2);
+        //Drawing the green square
+        g2.setColor(Color.GREEN);
+        g2.fillRect(GameTester.LINE_BORDERX + GameTester.LINE_LENGTH + 
+                    (GameTester.LINE_BORDERX
+                        - GameTester.DIAMETER - GameTester.IMAGE_BORDERX),
+                    GameTester.TITLE_BORDER_DISTANCEY * 2,
+                    GameTester.DIAMETER, GameTester.DIAMETER);
+    }
 
-        
+    private void paintArrow(Graphics2D g2) {
+        //Drawing the blue arrow
+        //Draw the "main line" of the arrow
+        g2.setColor(new Color(135, 206, 235));
+        g2.drawLine(GameTester.LINE_BORDERX,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2, 
+                    GameTester.LINE_BORDERX + GameTester.LINE_LENGTH,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2);
+        //Draw the "wings" of the arrow
+        g2.drawLine(GameTester.LINE_BORDERX + GameTester.LINE_LENGTH,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2,
+                    GameTester.LINE_BORDERX + GameTester.LINE_LENGTH
+                                            - GameTester.ARROW_WING,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2
+                                - GameTester.ARROW_WING);
+        g2.drawLine(GameTester.LINE_BORDERX + GameTester.LINE_LENGTH,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2,
+                    GameTester.LINE_BORDERX + GameTester.LINE_LENGTH
+                                            - GameTester.ARROW_WING,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2
+                                + GameTester.ARROW_WING);
     }
 }
