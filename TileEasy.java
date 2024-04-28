@@ -46,4 +46,10 @@ public class TileEasy extends Tile
 		this.setColor(VISITED);
 		arrived = true;
 	}
+
+	/** @return the bounding Shape of the Tile
+	 */
+	@Override public Rectangle2D.Double getShape() {
+		return new Rectangle2D.Double(xCoor, yCoor, dimension, dimension);
+	}
 }
