@@ -9,18 +9,28 @@
 
 import java.awt.Color;
 
-public class Tile
+public abstract class Tile
 {
 	//instance variables
+	private int xCoor;
+	private int yCoor;
 	private int dimension;
 	private Color color;
 	
+	//constants 
+	public static final Color PATH = Color.WHITE;
+	public static final Color WALL = Color.BLACK;
+	
 	/** Creates a Tile to use 
+	 *  @param x the x coordinate of the tile
+	 * 	@param y the y coordinate of the tile
 	 *  @param d the dimension of the tile
 	 *  @param col the color of the tile
 	 */
-	public Tile(int d, Color col)
+	public Tile(int x, int y, int d, Color col)
 	{
+		xCoor = x;
+		yCoor = y;
 		dimension = d;
 		color = col;
 	}
@@ -40,4 +50,29 @@ public class Tile
 	{
 		color = col;
 	}
+	
+	/** Gets the dimension of the tile
+	 *  @return the dimension of the tile
+	 */
+	public int getDimension()
+	{
+		return dimension;
+	}
+	
+	/** Gets the x coordinate of the tile
+	 *  @return the x coordinate of the tile
+	 */
+	public int getX()
+	{
+		return xCoor;
+	}
+	
+	/** Gets the y coordinate of the tile
+	 *  @return the y coordinate of the tile
+	 */
+	public int getY()
+	{
+		return yCoor;
+	}
+	
 }
