@@ -76,5 +76,10 @@ public abstract class Tile
 	{
 		return yCoor;
 	}
-	
+
+	/** Gets the bounding shape of the Tile, 
+ 	 * be it a TileEasy, TileHard, or Player.
+	 *  @return the bounding shape of the Tile.
+	 */	
+	public abstract Shape getShape();
 }
