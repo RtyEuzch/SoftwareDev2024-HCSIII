@@ -43,7 +43,7 @@ public class TileHard extends Tile
 	
 	/** Changes the color of the tile if it got visited
 	 */
-	public void gotVisited()
+	public void isVisited()
 	{
 		this.setColor(VISITED);
 		arrived = true;
