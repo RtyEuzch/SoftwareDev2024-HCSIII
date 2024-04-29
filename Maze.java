@@ -27,39 +27,45 @@ public class Maze extends JComponent {
      * @param gridDimension the dimension of the grid, used to determine the   
      *                      difficulty of the maze.
      */
-    private void buildMaze(int gridDimension) {
+    private void buildMaze() {
         boolean isValid = false;
         while (!isValid) {
             for (int row = 0; row < grid.length; row++) {
                 for (int col = 0; col < grid[0].length; col++) {
                     double chance = Math.random();
                     if (chance < CHANCE_OF_WALL) {
-                        if (gridDimension == Tile.EASY_DIMENSION) {
-                            grid[row][col] = new TileEasy(
+                        if (!(row == grid.length - 1 && col == 0)
+                            && !(row == 0 && col == grid[0].length - 1)) {
+                            if (grid.length == Tile.EASY_DIMENSION) {
+                                grid[row][col] = new TileEasy(
                                                     col * Tile.EASY_DIMENSION,
                                                     row * Tile.EASY_DIMENSION,
                                                     tileDimensions,
                                                     Tile.WALL);
-                        } else {
-                            grid[row][col] = new TileHard(
-                                col * Tile.HARD_DIMENSION,
-                                row * Tile.HARD_DIMENSION,
-                                tileDimensions,
-                                Tile.WALL);
+                            } else {
+                                grid[row][col] = new TileHard(
+                                                    col * Tile.HARD_DIMENSION,
+                                                    row * Tile.HARD_DIMENSION,
+                                                    tileDimensions,
+                                                    Tile.WALL);
+                            }
                         }
                     } else {
-                        if (gridDimension == Tile.EASY_DIMENSION) {
-                            grid[row][col] = new TileEasy(
+                        if (!(row == grid.length - 1 && col == 0)
+                            && !(row == 0 && col == grid[0].length - 1)) {
+                            if (grid.length == Tile.EASY_DIMENSION) {
+                                grid[row][col] = new TileEasy(
                                                     col * Tile.EASY_DIMENSION,
                                                     row * Tile.EASY_DIMENSION,
                                                     tileDimensions,
                                                     Tile.PATH);
-                        } else {
-                            grid[row][col] = new TileHard(
-                                col * Tile.HARD_DIMENSION,
-                                row * Tile.HARD_DIMENSION,
-                                tileDimensions,
-                                Tile.PATH);
+                            } else {
+                                grid[row][col] = new TileHard(
+                                                    col * Tile.HARD_DIMENSION,
+                                                    row * Tile.HARD_DIMENSION,
+                                                    tileDimensions,
+                                                    Tile.PATH);
+                            }
                         }
                     }
                 }
