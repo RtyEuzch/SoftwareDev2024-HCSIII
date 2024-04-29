@@ -20,6 +20,8 @@ public abstract class Tile
 	//constants 
 	public static final Color PATH = Color.WHITE;
 	public static final Color WALL = Color.BLACK;
+	public static final Color START = Color.GREEN;
+     	public static final Color END = Color.RED;
 	public static final int EASY_DIMENSION = 30;
 	public static final int HARD_DIMENSION = 75;
 	
