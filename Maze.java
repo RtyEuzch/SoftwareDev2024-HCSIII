@@ -1,5 +1,7 @@
+import javax.swing.*;
+import java.awt.*;
 public class Maze extends JComponent {
-    public static final int CHANCE_OF_WALL = .4;
+    public static final double CHANCE_OF_WALL = .4;
     public static final int CHANCE_OF_PATH = 60;
     private Tile[][] grid;
     private int tileDimensions;
@@ -16,7 +18,10 @@ public class Maze extends JComponent {
     public void paint(Graphics g) {
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[0].length; col++) {
-
+                g.setColor(Color.BLACK);
+                g.draw(grid[row][col].getShape());
+                g.setColor(grid[row][col].getColor());
+                g.fill(grid[row][col].getShape());
             }
         }
     }
@@ -29,6 +34,27 @@ public class Maze extends JComponent {
      */
     private void buildMaze() {
         boolean isValid = false;
+        //Start and end points
+        if (grid.length = Tile.EASY_DIMENSION) {
+            grid[grid.length - 1][0] = new TileEasy(grid.length - 1,
+                                                0,
+                                                tileDimensions,
+                                                Tile.START);
+            grid[0][grid.length - 1] = new TileEasy(0,
+                                                grid.length - 1,
+                                                tileDimensions,
+                                                Tile.END);
+        } else {
+            grid[grid.length - 1][0] = new TileHard(grid.length - 1,
+                                                0,
+                                                tileDimensions,
+                                                Tile.START);
+            grid[0][grid.length - 1] = new TileHard(0,
+                                                grid.length - 1,
+                                                tileDimensions,
+                                                Tile.END);
+        }
+        //General grid 
         while (!isValid) {
             for (int row = 0; row < grid.length; row++) {
                 for (int col = 0; col < grid[0].length; col++) {
@@ -82,4 +108,4 @@ public class Maze extends JComponent {
     private boolean DFS() {
         return true;
     }
-}
+} 
