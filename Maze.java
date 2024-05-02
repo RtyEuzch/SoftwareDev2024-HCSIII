@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 public class Maze extends JComponent {
-    public static final double CHANCE_OF_WALL = .4;
+    public static final double CHANCE_OF_WALL = .45;
     public static final int CHANCE_OF_PATH = 60;
     private Tile[][] grid;
     private int tileDimensions;
@@ -21,11 +21,11 @@ public class Maze extends JComponent {
             for (int col = 0; col < grid[0].length; col++) {
                 g.setColor(Color.BLACK);
                 g.draw(grid[row][col].getShape());
-                g.setColor(grid[row][col].getColor());
+                g.setColor(grid[row][col].getColor()); 
                 g.fill(grid[row][col].getShape());
             }
         }
-    }
+    }//System.out.println("ROW: " + row + "  |  COL: " + col + " | COLOR: " + grid[row][col].getColor());
 
     /**
      * Creates a maze by randomly populating the 2D array and then checking
@@ -75,25 +75,27 @@ public class Maze extends JComponent {
            // isValid = DFS(visitedArray, grid.length - 1, 0);
        // }
         //Start and end points
-      /*   if (grid.length == Tile.EASY_DIMENSION) {
+        if (grid.length == Tile.EASY_LENGTH) {
+        System.out.println("HELLO");
             grid[grid.length - 1][0] = new TileEasy(0,
-                                                grid.length - 1,
+                                                (grid.length - 1) * Tile.EASY_DIMENSION,
                                                 tileDimensions,
                                                 Tile.START);
-            grid[0][grid.length - 1] = new TileEasy(grid.length - 1,
+            grid[0][grid.length - 1] = new TileEasy((grid.length - 1) * Tile.EASY_DIMENSION,
                                                 0,
                                                 tileDimensions,
-                                                Tile.END);
+                                                Tile.END); 
+                                                System.out.println("Color: " + grid[0][grid.length - 1].getColor());
         } else {
             grid[grid.length - 1][0] = new TileHard(0,
-                                                grid.length - 1,
+                                                (grid.length - 1) * Tile.HARD_DIMENSION,
                                                 tileDimensions,
                                                 Tile.START);
-            grid[0][grid.length - 1] = new TileHard(grid.length - 1,
+            grid[0][grid.length - 1] = new TileHard((grid.length - 1) * Tile.HARD_DIMENSION,
                                                 0,
                                                 tileDimensions,
                                                 Tile.END);
-        }*/
+        }
     }
 
 
