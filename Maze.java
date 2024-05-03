@@ -1,144 +1,89 @@
-import javax.swing.*;
-import java.awt.*;
-public class Maze extends JComponent {
-    public static final double CHANCE_OF_WALL = .5;
-    public static final int CHANCE_OF_PATH = 60;
-    private Tile[][] grid;
-    private int tileDimensions;
+/**
+ * The Tile class creates many tiles to implement into the Grid of the game
+ * @author Tanishq Guin
+ * Due Date: 5/10/24
+ * Period: 3
+ * Teacher: Bailey
+ * Collaborators: Charles Doan, Murtaza Khan
+ */
 
-    public Maze(Tile[][] grid, int dimension) {
-        this.grid = grid;
-        tileDimensions = GameTester.DIMENSION / dimension;
-    }
-
-    /**
-     * Paints every Tile as listed in the 2D array of Tiles
-     * @param g
-     */
-    public void paint(Graphics gs) {
-        Graphics2D g = (Graphics2D) gs;
-        for (int row = 0; row < grid.length; row++) {
-            for (int col = 0; col < grid[0].length; col++) {
-                g.setColor(Color.BLACK);
-                g.draw(grid[row][col].getShape());
-                g.setColor(grid[row][col].getColor()); 
-                g.fill(grid[row][col].getShape());
-            }
-        }
-    }
-
-    /**
-     * Creates a maze by randomly populating the 2D array and then checking
-     * maze to ensure it is solvable through a DFS algorithm.
-     * @param gridDimension the dimension of the grid, used to determine the   
-     *                      difficulty of the maze.
-     */
-    public void buildMaze() {
-        boolean isValid = false;
-        //General grid 
-        while (!isValid) {
-            for (int row = 0; row < grid.length; row++) {
-                for (int col = 0; col < grid[0].length; col++) {
-                    double chance = Math.random();
-                    if (chance < CHANCE_OF_WALL) {
-                        if (grid.length == Tile.EASY_LENGTH) {
-                            grid[row][col] = new TileEasy(
-                                                col * Tile.EASY_DIMENSION,
-                                                row * Tile.EASY_DIMENSION,
-                                                Tile.EASY_DIMENSION,
-                                                Tile.WALL);
-                        } else {
-                            System.out.println("HARDHHHHHHH");
-                            grid[row][col] = new TileHard(
-                                                col * Tile.HARD_DIMENSION,
-                                                row * Tile.HARD_DIMENSION,
-                                                Tile.HARD_DIMENSION,
-                                                Tile.WALL);
-                        }
-                    } else {
-                        if (grid.length == Tile.EASY_LENGTH) {
-                            grid[row][col] = new TileEasy(
-                                                col * Tile.EASY_DIMENSION,
-                                                row * Tile.EASY_DIMENSION,
-                                                Tile.EASY_DIMENSION,
-                                                Tile.PATH);
-                        } else {
-                            grid[row][col] = new TileHard(
-                                                col * Tile.HARD_DIMENSION,
-                                                row * Tile.HARD_DIMENSION,
-                                                Tile.HARD_DIMENSION,
-                                                Tile.PATH);
-                        }
-                    }
-                }
-            }
-            //Start and end points
-            if (grid.length == Tile.EASY_LENGTH) {
-                grid[grid.length - 1][0] = new TileEasy(0,
-                                        (grid.length - 1) * Tile.EASY_DIMENSION,
-                                        tileDimensions,
-                                        Tile.START);
-                grid[0][grid.length - 1] = new TileEasy((grid.length - 1)
-                                        * Tile.EASY_DIMENSION,
-                                        0,
-                                        tileDimensions,
-                                        Tile.END); 
-            } else {
-                grid[grid.length - 1][0] = new TileHard(0,
-                                        (grid.length - 1) * Tile.HARD_DIMENSION,
-                                        tileDimensions,
-                                        Tile.START);
-                grid[0][grid.length - 1] = new TileHard((grid.length - 1)
-                                        * Tile.HARD_DIMENSION,
-                                        0,
-                                        tileDimensions,
-                                        Tile.END);
-            } 
-            boolean[][] visitedGrid = new boolean[grid.length][grid.length];
-            isValid = DFS(visitedGrid, grid.length - 1, 0);
-            System.out.println(isValid);
-        }
-    }
-
-
-    /** Runs DFS algorithm to check if maze is solvable
-     * @param visited is 2d array of grid to mark visited tile
-     * @param row is the row of the tile
-     * @param col is the column of the tile
-     * @return whether or not the maze is solvable
-     */
-    private boolean DFS(boolean[][] visited, int row, int col) {
-        if (grid[row][col].getColor().equals(Tile.END) ) 
-            return true;
-
-        visited[row][col] = true;
-
-        int[][] moves = {
-            {-1, 0}, {1, 0}, {0, -1}, {0, 1},   
-            {-1, -1}, {-1, 1}, {1, -1}, {1, 1}  
-        };
-
-        for (int[] move : moves) {
-            int newRow = row + move[0];
-            int newCol = col + move[1];
-            if (isValidMove(visited, newRow, newCol)) 
-                if (DFS(visited, newRow, newCol)) return true;  
-        }
-
-        return false;
-    }
-
-    /** Checks if the Tile is a valid place to visit
-     * @param visited is 2D array of grid to mark visited tile
-     * @param row is the row of the tile
-     * @param col is the column of the tile
-     * @return whether or not the Tile is available
-     */
-    private boolean isValidMove(boolean[][] visited, int row, int col) 
-    {
-        return (row >= 0 && row < grid.length && col >= 0 
-                         && col < grid.length
-                         && !(grid[row][col].getColor().equals(Tile.WALL))
-                         && !visited[row][col]); //
-    }
-}
+ import java.awt.*;
+ public abstract class Tile
+ {
+     //instance variables
+     protected int xCoor;
+     protected int yCoor;
+     protected int dimension;
+     protected Color color;
+     
+     //constants 
+     public static final Color PATH = Color.WHITE;
+     public static final Color WALL = Color.BLACK;
+     public static final Color START = Color.GREEN;
+     public static final Color END = Color.RED;
+     public static final Color PLAYER_COLOR = Color.BLUE;
+     public static final int EASY_LENGTH = 15;
+     public static final int HARD_LENGTH = 30;
+     public static final int EASY_DIMENSION = GameTester.DIMENSION / EASY_LENGTH;
+     public static final int HARD_DIMENSION = GameTester.DIMENSION / HARD_LENGTH;
+     
+     /** Creates a Tile to use 
+      *  @param x the x coordinate of the tile
+      *  @param y the y coordinate of the tile
+      *  @param d the dimension of the tile
+      *  @param col the color of the tile
+      */
+     public Tile(int x, int y, int d, Color col)
+     {
+         xCoor = x;
+         yCoor = y;
+         dimension = d;
+         color = col;
+     }
+     
+     /** Gets the color of the tile
+      *  @return the color of the tile
+      */
+     public Color getColor()
+     {
+         return color;
+     }
+     
+     /** Changes the color of the tile 
+      *  @param col the new color of the tile
+      */
+     public void setColor(Color col)
+     {
+         color = col;
+     }
+     
+     /** Gets the dimension of the tile
+      *  @return the dimension of the tile
+      */
+     public int getDimension()
+     {
+         return dimension;
+     }
+     
+     /** Gets the x coordinate of the tile
+      *  @return the x coordinate of the tile
+      */
+     public int getX()
+     {
+         return xCoor;
+     }
+     
+     /** Gets the y coordinate of the tile
+      *  @return the y coordinate of the tile
+      */
+     public int getY()
+     {
+         return yCoor;
+     }
+ 
+     /** Gets the bounding shape of the Tile, 
+       * be it a TileEasy, TileHard, or Player.
+      *  @return the bounding shape of the Tile.
+      */	
+     public abstract Shape getShape();
+ }
