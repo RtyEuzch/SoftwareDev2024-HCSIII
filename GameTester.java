@@ -30,24 +30,38 @@ public class GameTester {
         JButton hardButton = new JButton("Hard");
 
         //Configure the Buttons
-        easyButton.setPreferredSize(new Dimension(BUTTON_DIMENSION, BUTTON_DIMENSION / 2));
+        easyButton.setPreferredSize(
+            new Dimension(BUTTON_DIMENSION, BUTTON_DIMENSION / 2));
         easyButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent event) {
-                System.out.println("Hi");
+                mainScreen(Tile.EASY_LENGTH);
             }
         });
-        hardButton.setPreferredSize(new Dimension(BUTTON_DIMENSION, BUTTON_DIMENSION / 2));
+        hardButton.setPreferredSize(
+            new Dimension(BUTTON_DIMENSION, BUTTON_DIMENSION / 2));
+        hardButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent event) {
+                mainScreen(Tile.HARD_LENGTH);
+            }
+        });
         buttonPanel.add(easyButton);
         buttonPanel.add(hardButton);
         introFrame.add(buttonPanel, BorderLayout.SOUTH);
+        introFrame.setSize(DIMENSION, DIMENSION);
         introFrame.setVisible(true);
     }
 
-    public static void mainScreen() {
+    public static void mainScreen(int dimension) {
         JFrame mainFrame = new JFrame("Find the Way");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(DIMENSION, DIMENSION);
         mainFrame.setResizable(false);
+        Maze maze = new Maze(new Tile[dimension][dimension],
+                                      dimension);
+        maze.buildMaze();
+        mainFrame.add(maze);
+        mainFrame.setVisible(true);
+        mainFrame.setSize(DIMENSION, DIMENSION + mainFrame.getInsets().top);
         mainFrame.setVisible(true);
     }
 }
@@ -67,8 +81,8 @@ class IntroScreen extends JComponent {
                     GameTester.DIAMETER, 
                     GameTester.DIAMETER);
         paintArrow(g2);
-        //Drawing the green square
-        g2.setColor(Color.GREEN);
+        //Drawing the End square
+        g2.setColor(Tile.END);
         g2.fillRect(GameTester.LINE_BORDERX + GameTester.LINE_LENGTH + 
                     (GameTester.LINE_BORDERX
                         - GameTester.DIAMETER - GameTester.IMAGE_BORDERX),
