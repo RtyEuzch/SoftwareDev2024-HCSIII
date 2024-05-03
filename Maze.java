@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 public class Maze extends JComponent {
-    public static final double CHANCE_OF_WALL = .45;
+    public static final double CHANCE_OF_WALL = .5;
     public static final int CHANCE_OF_PATH = 60;
     private Tile[][] grid;
     private int tileDimensions;
@@ -25,7 +25,7 @@ public class Maze extends JComponent {
                 g.fill(grid[row][col].getShape());
             }
         }
-    }//System.out.println("ROW: " + row + "  |  COL: " + col + " | COLOR: " + grid[row][col].getColor());
+    }
 
     /**
      * Creates a maze by randomly populating the 2D array and then checking
@@ -36,7 +36,7 @@ public class Maze extends JComponent {
     public void buildMaze() {
         boolean isValid = false;
         //General grid 
-       // while (!isValid) {
+        while (!isValid) {
             for (int row = 0; row < grid.length; row++) {
                 for (int col = 0; col < grid[0].length; col++) {
                     double chance = Math.random();
@@ -48,6 +48,7 @@ public class Maze extends JComponent {
                                                 Tile.EASY_DIMENSION,
                                                 Tile.WALL);
                         } else {
+                            System.out.println("HARDHHHHHHH");
                             grid[row][col] = new TileHard(
                                                 col * Tile.HARD_DIMENSION,
                                                 row * Tile.HARD_DIMENSION,
@@ -71,30 +72,31 @@ public class Maze extends JComponent {
                     }
                 }
             }
-     	    boolean[][] visitedArray = new boolean[grid.length][grid[0].length];
-           // isValid = DFS(visitedArray, grid.length - 1, 0);
-       // }
-        //Start and end points
-        if (grid.length == Tile.EASY_LENGTH) {
-        System.out.println("HELLO");
-            grid[grid.length - 1][0] = new TileEasy(0,
-                                                (grid.length - 1) * Tile.EASY_DIMENSION,
-                                                tileDimensions,
-                                                Tile.START);
-            grid[0][grid.length - 1] = new TileEasy((grid.length - 1) * Tile.EASY_DIMENSION,
-                                                0,
-                                                tileDimensions,
-                                                Tile.END); 
-                                                System.out.println("Color: " + grid[0][grid.length - 1].getColor());
-        } else {
-            grid[grid.length - 1][0] = new TileHard(0,
-                                                (grid.length - 1) * Tile.HARD_DIMENSION,
-                                                tileDimensions,
-                                                Tile.START);
-            grid[0][grid.length - 1] = new TileHard((grid.length - 1) * Tile.HARD_DIMENSION,
-                                                0,
-                                                tileDimensions,
-                                                Tile.END);
+            //Start and end points
+            if (grid.length == Tile.EASY_LENGTH) {
+                grid[grid.length - 1][0] = new TileEasy(0,
+                                        (grid.length - 1) * Tile.EASY_DIMENSION,
+                                        tileDimensions,
+                                        Tile.START);
+                grid[0][grid.length - 1] = new TileEasy((grid.length - 1)
+                                        * Tile.EASY_DIMENSION,
+                                        0,
+                                        tileDimensions,
+                                        Tile.END); 
+            } else {
+                grid[grid.length - 1][0] = new TileHard(0,
+                                        (grid.length - 1) * Tile.HARD_DIMENSION,
+                                        tileDimensions,
+                                        Tile.START);
+                grid[0][grid.length - 1] = new TileHard((grid.length - 1)
+                                        * Tile.HARD_DIMENSION,
+                                        0,
+                                        tileDimensions,
+                                        Tile.END);
+            } 
+            boolean[][] visitedGrid = new boolean[grid.length][grid.length];
+            isValid = DFS(visitedGrid, grid.length - 1, 0);
+            System.out.println(isValid);
         }
     }
 
@@ -106,9 +108,8 @@ public class Maze extends JComponent {
      * @return whether or not the maze is solvable
      */
     private boolean DFS(boolean[][] visited, int row, int col) {
-        if (grid[row][col].getColor().equals(Tile.END) ) {
+        if (grid[row][col].getColor().equals(Tile.END) ) 
             return true;
-        }
 
         visited[row][col] = true;
 
@@ -120,10 +121,8 @@ public class Maze extends JComponent {
         for (int[] move : moves) {
             int newRow = row + move[0];
             int newCol = col + move[1];
-    
-            if (isValidMove(visited, newRow, newCol)) {
-                return DFS(visited, newRow, newCol);
-            }
+            if (isValidMove(visited, newRow, newCol)) 
+                if (DFS(visited, newRow, newCol)) return true;  
         }
 
         return false;
@@ -136,10 +135,10 @@ public class Maze extends JComponent {
      * @return whether or not the Tile is available
      */
     private boolean isValidMove(boolean[][] visited, int row, int col) 
-    { 
-        int rows = grid.length; 
-        int cols = grid[0].length; 
-        return (row >= 0 && row < rows && col >= 0 && col < cols
-        && !(grid[row][col].getColor().equals(Tile.WALL)) && !visited[row][col]); 
+    {
+        return (row >= 0 && row < grid.length && col >= 0 
+                         && col < grid.length
+                         && !(grid[row][col].getColor().equals(Tile.WALL))
+                         && !visited[row][col]); //
     }
 }
