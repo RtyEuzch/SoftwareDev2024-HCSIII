@@ -60,6 +60,20 @@ public class GameTester {
                                       dimension);
         maze.buildMaze();
         mainFrame.add(maze);
+        mainFrame.addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent ev) {
+                switch (ev.getKeyChar()) {
+                    case 'i': maze.movePlayer(0, -1); break;
+                    case 'o': maze.movePlayer(1, -1); break;
+                    case 'l': maze.movePlayer(1, 0); break;
+                    case '.': maze.movePlayer(1, 1); break;
+                    case ',': maze.movePlayer(0, 1); break;
+                    case 'm': maze.movePlayer(-1, 1); break;
+                    case 'j': maze.movePlayer(-1, 0); break;
+                    case 'u': maze.movePlayer(-1, -1); break;
+                }
+            }
+        });
         mainFrame.setVisible(true);
         mainFrame.setSize(DIMENSION, DIMENSION + mainFrame.getInsets().top);
         mainFrame.setVisible(true);
