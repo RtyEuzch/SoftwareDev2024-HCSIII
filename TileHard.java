@@ -18,7 +18,7 @@
      private boolean arrived; 
      
      //constants
-     private static final Color VISITED = Color.MAGENTA;
+     public static final Color VISITED = Color.MAGENTA;
      
      /** Creates the Hard Tile
       *  @param x the x coordinate of the tile
