@@ -17,7 +17,7 @@
      private boolean arrived;
      
      //constants
-     private static final Color VISITED = Color.YELLOW; 
+     public static final Color VISITED = Color.YELLOW; 
      
      /** Creates the Easy Tile
       *  @param x the x coordinate of the tile
