@@ -5,9 +5,17 @@ public class Maze extends JComponent {
     public static final int CHANCE_OF_PATH = 60;
     private Tile[][] grid;
     private int tileDimensions;
+    private Player player;
 
     public Maze(Tile[][] grid, int dimension) {
         this.grid = grid;
+        if (grid.length == Tile.EASY_LENGTH) {
+            player = new Player(0,
+            Tile.EASY_DIMENSION * grid.length - 1, dimension);
+        } else {
+            player = new Player(0, 
+            Tile.HARD_DIMENSION * grid.length - 1, dimension);
+        }
         tileDimensions = GameTester.DIMENSION / dimension;
     }
 
@@ -25,6 +33,10 @@ public class Maze extends JComponent {
                 g.fill(grid[row][col].getShape());
             }
         }
+        g.setColor(Color.BLACK);
+        g.draw(player.getShape());
+        g.setColor(player.getColor());
+        g.fill(player.getShape());
     }
 
     /**
@@ -48,7 +60,6 @@ public class Maze extends JComponent {
                                                 Tile.EASY_DIMENSION,
                                                 Tile.WALL);
                         } else {
-                            System.out.println("HARDHHHHHHH");
                             grid[row][col] = new TileHard(
                                                 col * Tile.HARD_DIMENSION,
                                                 row * Tile.HARD_DIMENSION,
@@ -96,7 +107,6 @@ public class Maze extends JComponent {
             } 
             boolean[][] visitedGrid = new boolean[grid.length][grid.length];
             isValid = DFS(visitedGrid, grid.length - 1, 0);
-            System.out.println(isValid);
         }
     }
 
@@ -140,5 +150,30 @@ public class Maze extends JComponent {
                          && col < grid.length
                          && !(grid[row][col].getColor().equals(Tile.WALL))
                          && !visited[row][col]); //
+    }
+
+    /**
+     * Moves the Player, updates their position in the actual grid, and 
+     * then marks the color of the square the Player was last on with the 
+     * color that matches the difficulty.
+     */
+
+    public void movePlayer(int dx, int dy) {
+        if (grid.length == Tile.EASY_LENGTH) {
+            int playerRow = player.getY() / Tile.EASY_DIMENSION;
+            int playerCol = player.getX() / Tile.EASY_DIMENSION;
+            if ((playerRow + dy >= grid.length)
+                || (playerCol + dx < 0)) return;
+            grid[playerRow][playerCol].setColor(TileEasy.VISITED);
+            player.move(Tile.EASY_DIMENSION * dx, Tile.EASY_DIMENSION * dy);
+        } else {
+            int playerRow = player.getY() / Tile.HARD_DIMENSION;
+            int playerCol = player.getX() / Tile.HARD_DIMENSION;
+            if ((playerRow + dy >= grid.length)
+                || (playerCol + dx < 0)) return;
+            grid[playerRow][playerCol].setColor(TileHard.VISITED);
+            player.move(Tile.EASY_DIMENSION * dx, Tile.HARD_DIMENSION * dy);
+        }
+        repaint();
     }
 }
