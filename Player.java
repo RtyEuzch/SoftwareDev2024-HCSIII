@@ -1,3 +1,11 @@
+/**
+ * The Player class maintains and updates the position of the player sprite
+ * @author Charles Doan
+ * Due Date: 5/10/24
+ * Period: 6
+ * Teacher: Bailey
+ * Collaborators: N/A
+ */
 import java.awt.geom.*;
 public class Player extends Tile {
     /**
