@@ -1,3 +1,17 @@
+/**
+ * The Maze class creates the 2D array necessary to hold the information of
+ * the tiles in the grid. It also holds the JComponent necessary to hold the 
+ * grid image itself. After storing the Tiles, it uses a method to display
+ * each element in the 2D array as a graphic. It also builds a maze through 
+ * randomly coloring each square either black (wall) or leaving it blank
+ * and uses a DFS algorithm to check if the maze is solvable, repeating the 
+ * maze creation process until the maze is solvable.
+ * @author Charles Doan
+ * Due Date: 5/10/24
+ * Period: 6
+ * Teacher: Bailey
+ * Collaborators: Murtaza Khan, Tanishq Guin
+ */
 import javax.swing.*;
 import java.awt.*;
 public class Maze extends JComponent {
@@ -9,6 +23,17 @@ public class Maze extends JComponent {
     private Player player;
     private JFrame thisFrame;
 
+    /**
+     * Initializes the 2D array, dimension of the tiles, and reference to 
+     * the JFrame to which the Maze component is added (in order to close
+     * the JFrame from inside the class).
+     * @param grid the 2D array that stores all the Tiles and their 
+     *              row and column number.
+     * @param dimension the dimension of the grid, not the JFrame that 
+     *                  bounds it (e.g. 15 is the dimension of a 
+     *                  15 x 15 grid).
+     * @param frame the reference to the JFrame to which the Maze is added.
+     */
     public Maze(Tile[][] grid, int dimension, JFrame frame) {
         this.grid = grid;
         thisFrame = frame;
@@ -71,63 +96,83 @@ public class Maze extends JComponent {
         while (!isValid) {
             for (int row = 0; row < grid.length; row++) {
                 for (int col = 0; col < grid[0].length; col++) {
-                    double chance = Math.random();
-                    if (chance < CHANCE_OF_WALL) {
-                        if (grid.length == Tile.EASY_LENGTH) {
-                            grid[row][col] = new TileEasy(
-                                                col * Tile.EASY_DIMENSION,
-                                                row * Tile.EASY_DIMENSION,
-                                                Tile.EASY_DIMENSION,
-                                                Tile.WALL);
-                        } else {
-                            grid[row][col] = new TileHard(
-                                                col * Tile.HARD_DIMENSION,
-                                                row * Tile.HARD_DIMENSION,
-                                                Tile.HARD_DIMENSION,
-                                                Tile.WALL);
-                        }
-                    } else {
-                        if (grid.length == Tile.EASY_LENGTH) {
-                            grid[row][col] = new TileEasy(
-                                                col * Tile.EASY_DIMENSION,
-                                                row * Tile.EASY_DIMENSION,
-                                                Tile.EASY_DIMENSION,
-                                                Tile.PATH);
-                        } else {
-                            grid[row][col] = new TileHard(
-                                                col * Tile.HARD_DIMENSION,
-                                                row * Tile.HARD_DIMENSION,
-                                                Tile.HARD_DIMENSION,
-                                                Tile.PATH);
-                        }
-                    }
+                    fillTile(row, col);
                 }
             }
             //Start and end points
-            if (grid.length == Tile.EASY_LENGTH) {
-                grid[grid.length - 1][0] = new TileEasy(0,
-                                        (grid.length - 1) * Tile.EASY_DIMENSION,
-                                        tileDimensions,
-                                        Tile.START);
-                grid[0][grid.length - 1] = new TileEasy((grid.length - 1)
-                                        * Tile.EASY_DIMENSION,
-                                        0,
-                                        tileDimensions,
-                                        Tile.END); 
-            } else {
-                grid[grid.length - 1][0] = new TileHard(0,
-                                        (grid.length - 1) * Tile.HARD_DIMENSION,
-                                        tileDimensions,
-                                        Tile.START);
-                grid[0][grid.length - 1] = new TileHard((grid.length - 1)
-                                        * Tile.HARD_DIMENSION,
-                                        0,
-                                        tileDimensions,
-                                        Tile.END);
-            } 
+            fillStartAndEnd();
+
+            //Checks if the maze is solvable
             boolean[][] visitedGrid = new boolean[grid.length][grid.length];
             isValid = DFS(visitedGrid, grid.length - 1, 0);
         }
+    }
+
+    /**
+     * Fills in an individual Tile in the grid, given its row and column
+     * in the 2D array
+     * @param row the row of the Tile
+     * @param col the column of the Tile
+     */
+    private void fillTile(int row, int col) {
+        double chance = Math.random();
+        if (chance < CHANCE_OF_WALL) {
+            if (grid.length == Tile.EASY_LENGTH) {
+                grid[row][col] = new TileEasy(
+                                    col * Tile.EASY_DIMENSION,
+                                    row * Tile.EASY_DIMENSION,
+                                    Tile.EASY_DIMENSION,
+                                    Tile.WALL);
+            } else {
+                grid[row][col] = new TileHard(
+                                    col * Tile.HARD_DIMENSION,
+                                    row * Tile.HARD_DIMENSION,
+                                    Tile.HARD_DIMENSION,
+                                    Tile.WALL);
+            }
+        } else {
+            if (grid.length == Tile.EASY_LENGTH) {
+                grid[row][col] = new TileEasy(
+                                    col * Tile.EASY_DIMENSION,
+                                    row * Tile.EASY_DIMENSION,
+                                    Tile.EASY_DIMENSION,
+                                    Tile.PATH);
+            } else {
+                grid[row][col] = new TileHard(
+                                    col * Tile.HARD_DIMENSION,
+                                    row * Tile.HARD_DIMENSION,
+                                    Tile.HARD_DIMENSION,
+                                    Tile.PATH);
+            }
+        }
+    }
+
+    /**
+     * Draws the starting and ending points of the maze at the
+     * bottom left and top right corners, respectively.
+     */
+    private void fillStartAndEnd() {
+        if (grid.length == Tile.EASY_LENGTH) {
+            grid[grid.length - 1][0] = new TileEasy(0,
+                                    (grid.length - 1) * Tile.EASY_DIMENSION,
+                                    tileDimensions,
+                                    Tile.START);
+            grid[0][grid.length - 1] = new TileEasy((grid.length - 1)
+                                    * Tile.EASY_DIMENSION,
+                                    0,
+                                    tileDimensions,
+                                    Tile.END); 
+        } else {
+            grid[grid.length - 1][0] = new TileHard(0,
+                                    (grid.length - 1) * Tile.HARD_DIMENSION,
+                                    tileDimensions,
+                                    Tile.START);
+            grid[0][grid.length - 1] = new TileHard((grid.length - 1)
+                                    * Tile.HARD_DIMENSION,
+                                    0,
+                                    tileDimensions,
+                                    Tile.END);
+        } 
     }
 
 
@@ -169,15 +214,17 @@ public class Maze extends JComponent {
         return (row >= 0 && row < grid.length && col >= 0 
                          && col < grid.length
                          && !(grid[row][col].getColor().equals(Tile.WALL))
-                         && !visited[row][col]); //
+                         && !visited[row][col]); 
     }
 
     /**
      * Moves the Player, updates their position in the actual grid, and 
      * then marks the color of the square the Player was last on with the 
      * color that matches the difficulty.
+     * @param dx the change in the row position
+     * @param dy the change in the column position
+     *      Precondition: dx and dy will only be -1, 0, and +1
      */
-
     public void movePlayer(int dx, int dy) {
         int newX = player.getX() + tileDimensions * dx;
         int newY = player.getY() + tileDimensions * dy;
@@ -206,6 +253,12 @@ public class Maze extends JComponent {
         }
     }
 
+    /**
+     * Indicates that the user has won the game and allows them to 
+     * choose whether to quit the game or return to the main menu.
+     *      Precondition: the Player has reached the red square at the
+     *                      top-right corner.
+     */
     private void victory() {
         String[] options = {"Quit", "Main Menu"};
         int choice = JOptionPane.showOptionDialog(
@@ -224,6 +277,12 @@ public class Maze extends JComponent {
             thisFrame.dispose();
     }
 
+    /**
+     * Indicates that the user has lost the game and allows them to 
+     * choose whether to quit the game or return to the main menu.
+     *      Precondition: the Player has touched a visited Tile 
+     *                      (colored magenta) or a wall (colored black).
+     */
     private void loss(String message) {
         String[] options = {"Quit", "Main Menu"};
         int choice = JOptionPane.showOptionDialog(
