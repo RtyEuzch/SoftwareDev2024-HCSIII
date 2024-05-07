@@ -14,7 +14,6 @@
  {
      //instance variables
      private Rectangle2D.Double rect;
-     private boolean arrived;
      
      //constants
      public static final Color VISITED = Color.YELLOW; 
@@ -27,24 +26,6 @@
      public TileEasy(int x, int y, int d, Color col)
      {
          super(x, y, d, col);
-         rect = new Rectangle2D.Double(getX(), getY(), getDimension(), getDimension());
-         arrived = false;
-     }
-     
-     /** Gets the rectangle made for the tile
-      *  @return the rectangle of the tile
-      */
-     public Rectangle2D.Double getRect()
-     {
-         return rect;
-     }
-     
-     /** Changes the color of the tile if it got visited
-      */
-     public void isVisited()
-     {
-         this.setColor(VISITED);
-         arrived = true;
      }
      
     /** @return the bounding Shape of the Tile
