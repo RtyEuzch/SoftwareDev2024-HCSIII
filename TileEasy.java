@@ -28,9 +28,9 @@
          super(x, y, d, col);
      }
      
-    /** @return the bounding Shape of the Tile
-	 */
-	@Override public Rectangle2D.Double getShape() {
-		return new Rectangle2D.Double(xCoor, yCoor, dimension, dimension);
-	}
+     /** @return the bounding Shape of the Tile
+	*/
+     @Override public Rectangle2D.Double getShape() {
+	return new Rectangle2D.Double(xCoor, yCoor, dimension, dimension);
+     }
  }
