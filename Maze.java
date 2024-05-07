@@ -3,25 +3,30 @@ import java.awt.*;
 public class Maze extends JComponent {
     public static final double CHANCE_OF_WALL = .5;
     public static final int CHANCE_OF_PATH = 60;
+    public static final int EASY_SCALAR = 4;
     private Tile[][] grid;
     private int tileDimensions;
     private Player player;
+    private JFrame thisFrame;
 
-    public Maze(Tile[][] grid, int dimension) {
+    public Maze(Tile[][] grid, int dimension, JFrame frame) {
         this.grid = grid;
-        if (grid.length == Tile.EASY_LENGTH) {
+        thisFrame = frame;
+        if (dimension == Tile.EASY_LENGTH) {
             player = new Player(0,
-            Tile.EASY_DIMENSION * grid.length - 1, dimension);
+            Tile.EASY_DIMENSION * (grid.length - 1), dimension * EASY_SCALAR);
+            tileDimensions = Tile.EASY_DIMENSION;
         } else {
             player = new Player(0, 
-            Tile.HARD_DIMENSION * grid.length - 1, dimension);
+            Tile.HARD_DIMENSION * (grid.length - 1), dimension);
+            tileDimensions = Tile.HARD_DIMENSION;
         }
-        tileDimensions = GameTester.DIMENSION / dimension;
     }
 
     /**
      * Paints every Tile as listed in the 2D array of Tiles
-     * @param g
+     * @param gs the graphics "paintbrush" used to draw or fill
+     *      the shapes it is called to draw.
      */
     public void paint(Graphics gs) {
         Graphics2D g = (Graphics2D) gs;
@@ -37,6 +42,22 @@ public class Maze extends JComponent {
         g.draw(player.getShape());
         g.setColor(player.getColor());
         g.fill(player.getShape());
+        if (player.getX() == tileDimensions * (grid.length - 1)
+            && player.getY() == 0) {
+            victory();
+        } 
+        //Check if collided with walls or visited paths in hard mode
+        if (tileDimensions == Tile.HARD_DIMENSION) {
+            int playerRow = player.getY() / tileDimensions;
+            int playerCol = player.getX() / tileDimensions;
+            if (grid[playerRow][playerCol].getColor().equals(Tile.WALL)) {
+                loss("You hit the wall!\nTake the L.");
+            }
+            if (grid[playerRow][playerCol].getColor()
+                                          .equals(TileHard.VISITED)) {
+                loss("No cheating!\nYou hit a visited square."); 
+            }
+        }
     }
 
     /**
@@ -47,7 +68,6 @@ public class Maze extends JComponent {
      */
     public void buildMaze() {
         boolean isValid = false;
-        //General grid 
         while (!isValid) {
             for (int row = 0; row < grid.length; row++) {
                 for (int col = 0; col < grid[0].length; col++) {
@@ -159,21 +179,66 @@ public class Maze extends JComponent {
      */
 
     public void movePlayer(int dx, int dy) {
-        if (grid.length == Tile.EASY_LENGTH) {
-            int playerRow = player.getY() / Tile.EASY_DIMENSION;
-            int playerCol = player.getX() / Tile.EASY_DIMENSION;
-            if ((playerRow + dy >= grid.length)
-                || (playerCol + dx < 0)) return;
-            grid[playerRow][playerCol].setColor(TileEasy.VISITED);
-            player.move(Tile.EASY_DIMENSION * dx, Tile.EASY_DIMENSION * dy);
-        } else {
-            int playerRow = player.getY() / Tile.HARD_DIMENSION;
-            int playerCol = player.getX() / Tile.HARD_DIMENSION;
-            if ((playerRow + dy >= grid.length)
-                || (playerCol + dx < 0)) return;
-            grid[playerRow][playerCol].setColor(TileHard.VISITED);
-            player.move(Tile.EASY_DIMENSION * dx, Tile.HARD_DIMENSION * dy);
+        int newX = player.getX() + tileDimensions * dx;
+        int newY = player.getY() + tileDimensions * dy;
+    
+        int playerRow = player.getY() / tileDimensions;
+        int playerCol = player.getX() / tileDimensions;
+    
+        int newPlayerRow = newY / tileDimensions;
+        int newPlayerCol = newX / tileDimensions;
+    
+        // Check if the new position is within the grid bounds
+        if (newPlayerRow >= 0 && newPlayerRow < grid.length
+            && newPlayerCol >= 0 && newPlayerCol < grid[0].length) {
+            // Check if the new position is a valid path (not a wall)
+            if (grid.length == Tile.EASY_LENGTH) {
+                if (grid[newPlayerRow][newPlayerCol].getColor() != Tile.WALL) {
+                    grid[playerRow][playerCol].setColor(TileEasy.VISITED);
+                    player.move(tileDimensions * dx, tileDimensions * dy);
+                } 
+                repaint();
+            } else {
+                grid[playerRow][playerCol].setColor(TileHard.VISITED);
+                player.move(tileDimensions * dx, tileDimensions * dy);
+                repaint();
+            }
         }
-        repaint();
+    }
+
+    private void victory() {
+        String[] options = {"Quit", "Main Menu"};
+        int choice = JOptionPane.showOptionDialog(
+                    thisFrame,
+                    "You won the game!\nWhat would you like to do?",
+                    "Congratulations!",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+    
+        if (choice == 0) 
+            System.exit(0);
+        else if (choice == 1) 
+            thisFrame.dispose();
+    }
+
+    private void loss(String message) {
+        String[] options = {"Quit", "Main Menu"};
+        int choice = JOptionPane.showOptionDialog(
+                    thisFrame,
+                    message,
+                    "You lost!",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+    
+        if (choice == 0) 
+            System.exit(0);
+        else if (choice == 1) 
+            thisFrame.dispose();
     }
 }
