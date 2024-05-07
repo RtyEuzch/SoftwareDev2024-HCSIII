@@ -1,3 +1,17 @@
+/**
+ * The GameTester class creates the JFrames necessary to run the program.
+ * The first JFrame is the main menu, which allows the player to choose
+ * between the easy and hard modes. The second JFrame is the actual game, 
+ * where the GameTester class is responsible for adding the listeners 
+ * necessary to allow the user to control the player using the keyboard
+ * keys that surround the 'k' key.
+ * @author Charles Doan
+ * Due Date: 5/10/24
+ * Period: 6
+ * Teacher: Bailey
+ * Collaborators: N/A
+ */
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -13,6 +27,13 @@ public class GameTester {
     public static final int DIAMETER = 150;
     public static final int FONT_SIZE = 150;
     public static final int TITLE_BORDER_DISTANCEY = 170;
+    public static final Color LIGHT_BLUE = new Color(135, 206, 235);
+
+    /**
+     * The main method that executes the procedural code and the 
+     * game.
+     * @param args the command-line arguments (unused)
+     */
     public static void main(String[] args) {
         //Create the JFrame and set its settings
         JFrame introFrame = new JFrame("Intro Screen");
@@ -51,6 +72,14 @@ public class GameTester {
         introFrame.setVisible(true);
     }
 
+    /**
+     * Creates the JFrame that holds the game itself, grid, and player.
+     * It adds the KeyAdapter necessary to allow the user to control
+     * the player, registering different motions depending on what
+     * key the player presses.
+     * @param dimension the dimension of the grid being created
+     *                  (e.g. 15 x 15 for easy mode).
+     */
     public static void mainScreen(int dimension) {
         JFrame mainFrame = new JFrame("Find the Way");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,7 +109,20 @@ public class GameTester {
     }
 }
 
+/**
+ * The IntroScreen class creates the JFrame for the main menu.
+ * It uses Graphics to draw the images and display text.
+ * @author Charles Doan
+ * Due Date: 5/10/24
+ * Period: 6
+ * Teacher: Bailey
+ * Collaborators: N/A
+ */
 class IntroScreen extends JComponent {
+    /**
+     * Draws the display image of the main menu.
+     * @param g the Graphics object used to draw/fill the shapes.
+     */
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setFont(new Font("Times New Roman",
@@ -104,10 +146,15 @@ class IntroScreen extends JComponent {
                     GameTester.DIAMETER, GameTester.DIAMETER);
     }
 
+    /**
+     * A helper method that draws the light blue arrow in the display
+     * @param g2 the Graphics2D object that serves as a "paintbrush" to
+     *              draw the arrow with.
+     */
     private void paintArrow(Graphics2D g2) {
         //Drawing the blue arrow
         //Draw the "main line" of the arrow
-        g2.setColor(new Color(135, 206, 235));
+        g2.setColor(GameTester.LIGHT_BLUE);
         g2.drawLine(GameTester.LINE_BORDERX,
                     GameTester.TITLE_BORDER_DISTANCEY * 2 
                                 + GameTester.DIAMETER / 2, 
