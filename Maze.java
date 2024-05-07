@@ -116,11 +116,11 @@ public class Maze extends JComponent {
      */
     private void fillTile(int row, int col) {
         double chance = Math.random();
-        if (chance < CHANCE_OF_WALL) {
+        if (chance < CHANCE_OF_WALL) 
             initializeTile(row, col, tileDimensions, Tile.WALL);
-        } else {
+        else 
             initializeTile(row, col, tileDimensions, Tile.PATH);
-        }
+        
     }
 
     /**
@@ -194,7 +194,8 @@ public class Maze extends JComponent {
             int newRow = row + move[0];
             int newCol = col + move[1];
             if (isValidMove(visited, newRow, newCol)) 
-                if (DFS(visited, newRow, newCol)) return true;  
+                if (DFS(visited, newRow, newCol))
+                    return true;  
         }
 
         return false;
