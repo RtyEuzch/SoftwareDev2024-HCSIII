@@ -57,7 +57,7 @@ public class GameTester {
         mainFrame.setSize(DIMENSION, DIMENSION);
         mainFrame.setResizable(false);
         Maze maze = new Maze(new Tile[dimension][dimension],
-                                      dimension);
+                                      dimension, mainFrame);
         maze.buildMaze();
         mainFrame.add(maze);
         mainFrame.addKeyListener(new KeyAdapter() {
