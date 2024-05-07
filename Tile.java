@@ -1,5 +1,6 @@
 /**
- * The Tile class creates many tiles to implement into the Grid of the game
+ * The Tile class holds the general functionality of each tile
+ * to implement into the Grid of the game
  * @author Tanishq Guin
  * Due Date: 5/10/24
  * Period: 3
@@ -24,8 +25,10 @@
      public static final Color PLAYER_COLOR = Color.BLUE;
      public static final int EASY_LENGTH = 15;
      public static final int HARD_LENGTH = 30;
-     public static final int EASY_DIMENSION = GameTester.DIMENSION / EASY_LENGTH;
-     public static final int HARD_DIMENSION = GameTester.DIMENSION / HARD_LENGTH;
+     public static final int EASY_DIMENSION =
+                    GameTester.DIMENSION / EASY_LENGTH;
+     public static final int HARD_DIMENSION = 
+                    GameTester.DIMENSION / HARD_LENGTH;
      
      /** Creates a Tile to use 
       *  @param x the x coordinate of the tile
@@ -57,7 +60,7 @@
          color = col;
      }
      
-     /** Gets the dimension of the tile
+     /** 
       *  @return the dimension of the tile
       */
      public int getDimension()
@@ -65,7 +68,7 @@
          return dimension;
      }
      
-     /** Gets the x coordinate of the tile
+     /** 
       *  @return the x coordinate of the tile
       */
      public int getX()
@@ -73,7 +76,7 @@
          return xCoor;
      }
      
-     /** Gets the y coordinate of the tile
+     /** 
       *  @return the y coordinate of the tile
       */
      public int getY()
