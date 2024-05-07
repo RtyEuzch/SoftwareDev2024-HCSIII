@@ -117,33 +117,30 @@ public class Maze extends JComponent {
     private void fillTile(int row, int col) {
         double chance = Math.random();
         if (chance < CHANCE_OF_WALL) {
-            if (grid.length == Tile.EASY_LENGTH) {
-                grid[row][col] = new TileEasy(
-                                    col * Tile.EASY_DIMENSION,
-                                    row * Tile.EASY_DIMENSION,
-                                    Tile.EASY_DIMENSION,
-                                    Tile.WALL);
-            } else {
-                grid[row][col] = new TileHard(
-                                    col * Tile.HARD_DIMENSION,
-                                    row * Tile.HARD_DIMENSION,
-                                    Tile.HARD_DIMENSION,
-                                    Tile.WALL);
-            }
+            initializeTile(row, col, tileDimensions, Tile.WALL);
         } else {
-            if (grid.length == Tile.EASY_LENGTH) {
-                grid[row][col] = new TileEasy(
-                                    col * Tile.EASY_DIMENSION,
-                                    row * Tile.EASY_DIMENSION,
-                                    Tile.EASY_DIMENSION,
-                                    Tile.PATH);
-            } else {
-                grid[row][col] = new TileHard(
-                                    col * Tile.HARD_DIMENSION,
-                                    row * Tile.HARD_DIMENSION,
-                                    Tile.HARD_DIMENSION,
-                                    Tile.PATH);
-            }
+            initializeTile(row, col, tileDimensions, Tile.PATH);
+        }
+    }
+
+    /**
+     * Helper method which nitializes the tile, based on the color,
+     * position in the 2D array, and whether or not it is a Tile
+     * in easy or hard mode.
+     * @param row the row of the Tile
+     * @param col the column of the Tile
+     * @param dimension the side length of the Tile
+     * @param color the color of the Tile
+     */
+    private void initializeTile(int row, int col, int dimension, Color color) {
+        if (grid.length == Tile.EASY_LENGTH) {
+            grid[row][col] = new TileEasy(col * dimension, row * dimension,
+                                          dimension,
+                                          color);            
+        } else {
+            grid[row][col] = new TileHard(col * dimension, row * dimension,
+                                          dimension,
+                                          color);   
         }
     }
 
