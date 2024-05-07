@@ -1,244 +1,135 @@
 import javax.swing.*;
 import java.awt.*;
-public class Maze extends JComponent {
-    public static final double CHANCE_OF_WALL = .5;
-    public static final int CHANCE_OF_PATH = 60;
-    public static final int EASY_SCALAR = 4;
-    private Tile[][] grid;
-    private int tileDimensions;
-    private Player player;
-    private JFrame thisFrame;
+import java.awt.event.*;
+import java.awt.geom.Rectangle2D.Double;
+public class GameTester {
+    public static final int DIMENSION = 900;
+    public static final int BUTTON_DIMENSION = 400;
+    public static final int TITLE_BORDER_DISTANCEX = DIMENSION / 500 * 20;
+    public static final int IMAGE_BORDERX = TITLE_BORDER_DISTANCEX * 4;
+    public static final int LINE_BORDERX = IMAGE_BORDERX * 4;
+    public static final int LINE_LENGTH = 250;
+    public static final int ARROW_WING = 50;
+    public static final int DIAMETER = 150;
+    public static final int FONT_SIZE = 150;
+    public static final int TITLE_BORDER_DISTANCEY = 170;
+    public static void main(String[] args) {
+        //Create the JFrame and set its settings
+        JFrame introFrame = new JFrame("Intro Screen");
+        introFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        introFrame.setSize(DIMENSION, DIMENSION);
+        introFrame.setResizable(false);
 
-    public Maze(Tile[][] grid, int dimension, JFrame frame) {
-        this.grid = grid;
-        thisFrame = frame;
-        if (dimension == Tile.EASY_LENGTH) {
-            player = new Player(0,
-            Tile.EASY_DIMENSION * (grid.length - 1), dimension * EASY_SCALAR);
-            tileDimensions = Tile.EASY_DIMENSION;
-        } else {
-            player = new Player(0, 
-            Tile.HARD_DIMENSION * (grid.length - 1), dimension);
-            tileDimensions = Tile.HARD_DIMENSION;
-        }
+        //Add JComponent
+        IntroScreen introComponent = new IntroScreen();
+        introFrame.add(introComponent);
+
+        //JPanel with buttons
+        JPanel buttonPanel = new JPanel();
+        JButton easyButton = new JButton("Easy");
+        JButton hardButton = new JButton("Hard");
+
+        //Configure the Buttons
+        easyButton.setPreferredSize(
+            new Dimension(BUTTON_DIMENSION, BUTTON_DIMENSION / 2));
+        easyButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent event) {
+                mainScreen(Tile.EASY_LENGTH);
+            }
+        });
+        hardButton.setPreferredSize(
+            new Dimension(BUTTON_DIMENSION, BUTTON_DIMENSION / 2));
+        hardButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent event) {
+                mainScreen(Tile.HARD_LENGTH);
+            }
+        });
+        buttonPanel.add(easyButton);
+        buttonPanel.add(hardButton);
+        introFrame.add(buttonPanel, BorderLayout.SOUTH);
+        introFrame.setSize(DIMENSION, DIMENSION);
+        introFrame.setVisible(true);
     }
 
-    /**
-     * Paints every Tile as listed in the 2D array of Tiles
-     * @param gs the graphics "paintbrush" used to draw or fill
-     *      the shapes it is called to draw.
-     */
-    public void paint(Graphics gs) {
-        Graphics2D g = (Graphics2D) gs;
-        for (int row = 0; row < grid.length; row++) {
-            for (int col = 0; col < grid[0].length; col++) {
-                g.setColor(Color.BLACK);
-                g.draw(grid[row][col].getShape());
-                g.setColor(grid[row][col].getColor()); 
-                g.fill(grid[row][col].getShape());
-            }
-        }
-        g.setColor(Color.BLACK);
-        g.draw(player.getShape());
-        g.setColor(player.getColor());
-        g.fill(player.getShape());
-        if (player.getX() == tileDimensions * (grid.length - 1)
-            && player.getY() == 0) {
-            victory();
-        } 
-        //Check if collided with walls or visited paths in hard mode
-        if (tileDimensions == Tile.HARD_DIMENSION) {
-            int playerRow = player.getY() / tileDimensions;
-            int playerCol = player.getX() / tileDimensions;
-            if (grid[playerRow][playerCol].getColor().equals(Tile.WALL)) {
-                loss("You hit the wall!\nTake the L.");
-            }
-            if (grid[playerRow][playerCol].getColor()
-                                          .equals(TileHard.VISITED)) {
-                loss("No cheating!\nYou hit a visited square."); 
-            }
-        }
-    }
-
-    /**
-     * Creates a maze by randomly populating the 2D array and then checking
-     * maze to ensure it is solvable through a DFS algorithm.
-     * @param gridDimension the dimension of the grid, used to determine the   
-     *                      difficulty of the maze.
-     */
-    public void buildMaze() {
-        boolean isValid = false;
-        while (!isValid) {
-            for (int row = 0; row < grid.length; row++) {
-                for (int col = 0; col < grid[0].length; col++) {
-                    double chance = Math.random();
-                    if (chance < CHANCE_OF_WALL) {
-                        if (grid.length == Tile.EASY_LENGTH) {
-                            grid[row][col] = new TileEasy(
-                                                col * Tile.EASY_DIMENSION,
-                                                row * Tile.EASY_DIMENSION,
-                                                Tile.EASY_DIMENSION,
-                                                Tile.WALL);
-                        } else {
-                            grid[row][col] = new TileHard(
-                                                col * Tile.HARD_DIMENSION,
-                                                row * Tile.HARD_DIMENSION,
-                                                Tile.HARD_DIMENSION,
-                                                Tile.WALL);
-                        }
-                    } else {
-                        if (grid.length == Tile.EASY_LENGTH) {
-                            grid[row][col] = new TileEasy(
-                                                col * Tile.EASY_DIMENSION,
-                                                row * Tile.EASY_DIMENSION,
-                                                Tile.EASY_DIMENSION,
-                                                Tile.PATH);
-                        } else {
-                            grid[row][col] = new TileHard(
-                                                col * Tile.HARD_DIMENSION,
-                                                row * Tile.HARD_DIMENSION,
-                                                Tile.HARD_DIMENSION,
-                                                Tile.PATH);
-                        }
-                    }
+    public static void mainScreen(int dimension) {
+        JFrame mainFrame = new JFrame("Find the Way");
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(DIMENSION, DIMENSION);
+        mainFrame.setResizable(false);
+        Maze maze = new Maze(new Tile[dimension][dimension],
+                                      dimension, mainFrame);
+        maze.buildMaze();
+        mainFrame.add(maze);
+        mainFrame.addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent ev) {
+                switch (ev.getKeyChar()) {
+                    case 'i': maze.movePlayer(0, -1); break;
+                    case 'o': maze.movePlayer(1, -1); break;
+                    case 'l': maze.movePlayer(1, 0); break;
+                    case '.': maze.movePlayer(1, 1); break;
+                    case ',': maze.movePlayer(0, 1); break;
+                    case 'm': maze.movePlayer(-1, 1); break;
+                    case 'j': maze.movePlayer(-1, 0); break;
+                    case 'u': maze.movePlayer(-1, -1); break;
                 }
             }
-            //Start and end points
-            if (grid.length == Tile.EASY_LENGTH) {
-                grid[grid.length - 1][0] = new TileEasy(0,
-                                        (grid.length - 1) * Tile.EASY_DIMENSION,
-                                        tileDimensions,
-                                        Tile.START);
-                grid[0][grid.length - 1] = new TileEasy((grid.length - 1)
-                                        * Tile.EASY_DIMENSION,
-                                        0,
-                                        tileDimensions,
-                                        Tile.END); 
-            } else {
-                grid[grid.length - 1][0] = new TileHard(0,
-                                        (grid.length - 1) * Tile.HARD_DIMENSION,
-                                        tileDimensions,
-                                        Tile.START);
-                grid[0][grid.length - 1] = new TileHard((grid.length - 1)
-                                        * Tile.HARD_DIMENSION,
-                                        0,
-                                        tileDimensions,
-                                        Tile.END);
-            } 
-            boolean[][] visitedGrid = new boolean[grid.length][grid.length];
-            isValid = DFS(visitedGrid, grid.length - 1, 0);
-        }
+        });
+        mainFrame.setVisible(true);
+        mainFrame.setSize(DIMENSION, DIMENSION + mainFrame.getInsets().top);
+        mainFrame.setVisible(true);
+    }
+}
+
+class IntroScreen extends JComponent {
+    public void paint(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setFont(new Font("Times New Roman",
+                            Font.ITALIC, GameTester.FONT_SIZE));
+        g2.drawString("Find the Way!",
+                      GameTester.TITLE_BORDER_DISTANCEX,
+                      GameTester.TITLE_BORDER_DISTANCEY);
+        g2.setColor(Color.BLACK);
+        g2.setStroke(new BasicStroke(5));
+        g2.drawOval(GameTester.IMAGE_BORDERX,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2, 
+                    GameTester.DIAMETER, 
+                    GameTester.DIAMETER);
+        paintArrow(g2);
+        //Drawing the End square
+        g2.setColor(Tile.END);
+        g2.fillRect(GameTester.LINE_BORDERX + GameTester.LINE_LENGTH + 
+                    (GameTester.LINE_BORDERX
+                        - GameTester.DIAMETER - GameTester.IMAGE_BORDERX),
+                    GameTester.TITLE_BORDER_DISTANCEY * 2,
+                    GameTester.DIAMETER, GameTester.DIAMETER);
     }
 
-
-    /** Runs DFS algorithm to check if maze is solvable
-     * @param visited is 2d array of grid to mark visited tile
-     * @param row is the row of the tile
-     * @param col is the column of the tile
-     * @return whether or not the maze is solvable
-     */
-    private boolean DFS(boolean[][] visited, int row, int col) {
-        if (grid[row][col].getColor().equals(Tile.END) ) 
-            return true;
-
-        visited[row][col] = true;
-
-        int[][] moves = {
-            {-1, 0}, {1, 0}, {0, -1}, {0, 1},   
-            {-1, -1}, {-1, 1}, {1, -1}, {1, 1}  
-        };
-
-        for (int[] move : moves) {
-            int newRow = row + move[0];
-            int newCol = col + move[1];
-            if (isValidMove(visited, newRow, newCol)) 
-                if (DFS(visited, newRow, newCol)) return true;  
-        }
-
-        return false;
-    }
-
-    /** Checks if the Tile is a valid place to visit
-     * @param visited is 2D array of grid to mark visited tile
-     * @param row is the row of the tile
-     * @param col is the column of the tile
-     * @return whether or not the Tile is available
-     */
-    private boolean isValidMove(boolean[][] visited, int row, int col) 
-    {
-        return (row >= 0 && row < grid.length && col >= 0 
-                         && col < grid.length
-                         && !(grid[row][col].getColor().equals(Tile.WALL))
-                         && !visited[row][col]); //
-    }
-
-    /**
-     * Moves the Player, updates their position in the actual grid, and 
-     * then marks the color of the square the Player was last on with the 
-     * color that matches the difficulty.
-     */
-
-    public void movePlayer(int dx, int dy) {
-        int newX = player.getX() + tileDimensions * dx;
-        int newY = player.getY() + tileDimensions * dy;
-    
-        int playerRow = player.getY() / tileDimensions;
-        int playerCol = player.getX() / tileDimensions;
-    
-        int newPlayerRow = newY / tileDimensions;
-        int newPlayerCol = newX / tileDimensions;
-    
-        // Check if the new position is within the grid bounds
-        if (newPlayerRow >= 0 && newPlayerRow < grid.length
-            && newPlayerCol >= 0 && newPlayerCol < grid[0].length) {
-            // Check if the new position is a valid path (not a wall)
-            if (grid.length == Tile.EASY_LENGTH) {
-                if (grid[newPlayerRow][newPlayerCol].getColor() != Tile.WALL) {
-                    grid[playerRow][playerCol].setColor(TileEasy.VISITED);
-                    player.move(tileDimensions * dx, tileDimensions * dy);
-                } 
-                repaint();
-            } else {
-                grid[playerRow][playerCol].setColor(TileHard.VISITED);
-                player.move(tileDimensions * dx, tileDimensions * dy);
-                repaint();
-            }
-        }
-    }
-
-    private void victory() {
-        String[] options = {"Quit", "Main Menu"};
-        int choice = JOptionPane.showOptionDialog(
-                    thisFrame,
-                    "You won the game!\nWhat would you like to do?",
-                    "Congratulations!",
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options,
-                    options[0]);
-    
-        if (choice == 0) 
-            System.exit(0);
-        else if (choice == 1) 
-            thisFrame.dispose();
-    }
-
-    private void loss(String message) {
-        String[] options = {"Quit", "Main Menu"};
-        int choice = JOptionPane.showOptionDialog(
-                    thisFrame,
-                    message,
-                    "You lost!",
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options,
-                    options[0]);
-    
-        if (choice == 0) 
-            System.exit(0);
-        else if (choice == 1) 
-            thisFrame.dispose();
+    private void paintArrow(Graphics2D g2) {
+        //Drawing the blue arrow
+        //Draw the "main line" of the arrow
+        g2.setColor(new Color(135, 206, 235));
+        g2.drawLine(GameTester.LINE_BORDERX,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2, 
+                    GameTester.LINE_BORDERX + GameTester.LINE_LENGTH,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2);
+        //Draw the "wings" of the arrow
+        g2.drawLine(GameTester.LINE_BORDERX + GameTester.LINE_LENGTH,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2,
+                    GameTester.LINE_BORDERX + GameTester.LINE_LENGTH
+                                            - GameTester.ARROW_WING,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2
+                                - GameTester.ARROW_WING);
+        g2.drawLine(GameTester.LINE_BORDERX + GameTester.LINE_LENGTH,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2,
+                    GameTester.LINE_BORDERX + GameTester.LINE_LENGTH
+                                            - GameTester.ARROW_WING,
+                    GameTester.TITLE_BORDER_DISTANCEY * 2 
+                                + GameTester.DIAMETER / 2
+                                + GameTester.ARROW_WING);
     }
 }
