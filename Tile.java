@@ -80,6 +80,23 @@
      {
          return yCoor;
      }
+
+     /** Sets the x coordinate of the tile
+      *  @return the x coordinate of the tile
+      */
+      public void setX(int x)
+      {
+          xCoor = x;
+      }
+      
+      /** Sets the y coordinate of the tile
+       *  @return the y coordinate of the tile
+       */
+      public void setY(int y)
+      {
+          yCoor = y;
+      }
+  
  
      /** Gets the bounding shape of the Tile, 
        * be it a TileEasy, TileHard, or Player.
